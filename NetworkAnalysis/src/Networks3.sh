@@ -9,7 +9,7 @@
 #         python BuildNetworks_v11.py $1 $2 $i 
 # done
 
-python BuildNetworks_v11.py $1 $2 $4
+python BuildNetworks_v12.py $1 $2 $4
 
 mkdir Networks_$3
 mv *Network_mu1e-7_initialDiffDp1_S10P15_R* Networks_$3

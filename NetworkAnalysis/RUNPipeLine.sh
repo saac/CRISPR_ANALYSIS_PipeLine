@@ -23,7 +23,7 @@ for i in $(seq $1 10 $2)
 do
     echo $i
 #     ./SUPERMaster.sh mu1e-7_initialDiffDp1_S10P15_R-12499 $i
-    ./SUPERMaster2.sh $3 $i
+    ./PipeLine.sh $3 $i
     
 #     echo Networks_$2
     cd $i 
