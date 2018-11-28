@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ./RUNPipeLine.sh T1 T2 FilePrefix-sed
+# ./RUNPipeLine.sh 0 50 mu1e-7_initialDiffDp10_S10P15_R-1987
+
+
+
 
 # T1=$(($1 - 50))
 # T2=$(($1 + 50))

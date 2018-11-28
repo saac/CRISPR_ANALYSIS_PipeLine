@@ -8,7 +8,7 @@ library(vegan)
 library(RColorBrewer)
 library(igraph)
 
-source('SHAI_functions.R')
+source('Functions.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 argument = args[1]

@@ -8,7 +8,7 @@ library(vegan)
 library(RColorBrewer)
 library(igraph)
 
-source('SHAI_functions.R')
+source('Functions.R')
 
 nsim=100
 folder_shuffled <- 'shuffled/'
