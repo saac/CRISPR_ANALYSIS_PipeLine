@@ -73,7 +73,14 @@ ggplot_bipartite_modules <- function(Z, node_data_obs, module_numbers=F, color_t
   Set1_modules <- with(Set1_modules, Set1_modules[order(module1,Set1),])
   Set2_modules <- unique(M[,c('Set2','module2','color2')])
   Set2_modules <- with(Set2_modules, Set2_modules[order(module2,Set2),])
-  module_colors <- c('gray50',unique(Set1_modules$color1))
+#   module_colors <- c('gray50',unique(Set1_modules$color1))
+  
+  
+  if (all(M$edge_in_out=='in')){
+    module_colors <- unique(Set1_modules$color1)
+  } else {
+    module_colors <- c('gray50',unique(Set1_modules$color1))
+  }  
   
   
   M %<>% filter(value==1) %>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
@@ -150,174 +157,174 @@ incidence_matrix_to_list <- function(M){
 }
 
 
-# A function to calculate the probabilistic model from Bascompte 2003, Olesen
-# 2007, Fortuna 2010, etc. Output is a single shuffled matrix.
-prob_model <- function(M){
-  c <- ncol(M)
-  r <- nrow(M)
-  prob_row <- rowSums(M)/c # calculate intrarow probabilities 
-  prob_column <- colSums(M)/r # calculate intracolumn probabilities 
-  P <- matrix(0,r,c) # matrix of probabilities of interactions
-  for (i in 1:r){
-    for(j in 1:c){
-      P[i,j] <- mean(c(prob_row[i],prob_column[j]))
-    }
-  }
-  
-  R <- matrix(runif(r*c),r,c) # M random matrix to compare to
-  S <- (P >= R)*1 # The shuffled matrix
-  return(S)
-}
+# # A function to calculate the probabilistic model from Bascompte 2003, Olesen
+# # 2007, Fortuna 2010, etc. Output is a single shuffled matrix.
+# prob_model <- function(M){
+#   c <- ncol(M)
+#   r <- nrow(M)
+#   prob_row <- rowSums(M)/c # calculate intrarow probabilities 
+#   prob_column <- colSums(M)/r # calculate intracolumn probabilities 
+#   P <- matrix(0,r,c) # matrix of probabilities of interactions
+#   for (i in 1:r){
+#     for(j in 1:c){
+#       P[i,j] <- mean(c(prob_row[i],prob_column[j]))
+#     }
+#   }
+#   
+#   R <- matrix(runif(r*c),r,c) # M random matrix to compare to
+#   S <- (P >= R)*1 # The shuffled matrix
+#   return(S)
+# }
+# 
+# # A wrapper function for the probabilistic model
+# prob_model_wrapper <- function(M, non_zero_rc_thershold=1, nsim=100, write_files=F, file_prefix, folder){
+#   shuffled_prob <- list()
+#   i <- 1
+#   while (i <= nsim){
+#     print(paste('Creating network with probabilistic model ',i,'/',nsim,sep=''))
+#     x <- prob_model(M)
+#     # Because the model is probabilistic it can create degenerate matrices with
+#     # rows and/or columns what have no interactinos (sum is 0). Only include the
+#     # shuffled matrix if the proportion of non-zero rows and columns it has is
+#     # beyond the threshold. By default all rows and cols must have at least one
+#     # interaction (threshold of 1).
+#     prop_non_zero_rows <- sum(rowSums(x)!=0)/nrow(x)
+#     prop_non_zero_cols <- sum(colSums(x)!=0)/ncol(x)
+#     if(prop_non_zero_rows>=non_zero_rc_thershold && prop_non_zero_cols>=non_zero_rc_thershold){
+#       shuffled_prob[[i]] <- x
+#       i <- i+1
+#     }
+#   }
+#   
+#   if (write_files){
+#     for(i in 1:nsim){
+#       x <- shuffled_prob[[i]]
+#       file <- paste(folder,'/',file_prefix,'_prob_',i,'.csv',sep='')
+#       print(file)
+#       write.csv(x, file)
+#     }
+#   }
+#   return(shuffled_prob)
+# }
+# 
+# # A function to shuffle a matrix with multiple methods
+# shuffle_bipartite_matrix <- function(M, shuff_methods, nsim=10, burnin=1000, write_files=F, file_prefix, folder){
+#   shuffled_list <- list()
+#   for (sm in shuff_methods){
+#     print(sm)
+#     null_model <- vegan::nullmodel(M, method = sm)
+#     shuffled <- simulate(null_model, nsim = nsim, burnin = burnin)
+#     shuffled_list[[which(shuff_methods==sm)]] <- shuffled
+#   }
+#   names(shuffled_list) <- shuff_methods
+#   
+#   if (write_files){
+#     for (sm in shuff_methods){
+#       for(i in 1:nsim){
+#         x <- shuffled_list[[which(shuff_methods==sm)]][,,i]
+#         file <- paste(folder,'/',file_prefix,'_',sm,'_',i,'.csv',sep='')
+#         print(file)
+#         write.csv(x, file)
+#       }
+#     }  
+#   }
+#   return(shuffled_list)
+# }
+# 
+# # Read shuffled networks to a list
+# read_shuffled_networks <- function(shuff_methods, nsim=10, file_prefix, folder){
+#   require(data.table)
+#   shuffled_list <- vector(mode = 'list', length(shuff_methods))
+#   names(shuffled_list) <- shuff_methods
+#   for (sm in shuff_methods){
+#     for (i in 1:nsim){
+#       file <- paste(folder,'/',file_prefix,'_',sm,'_',i,'.csv',sep='')
+#       x <- fread(file, sep = ',', header = F, stringsAsFactors = F, skip = 1, drop = 1)
+#       # Create an array when reading the first matrix
+#       if (is.null(shuffled_list[[which(sm==shuff_methods)]])){
+#         shuffled_list[[which(sm==shuff_methods)]] <- array(0, dim=list(nrow(x),ncol(x),nsim))
+#       }
+#       shuffled_list[[which(sm==shuff_methods)]][,,i] <- data.matrix(x)
+#     }
+#   }
+#   return(shuffled_list)
+# }
+# 
+# 
+# # Nestedness --------------------------------------------------------------
+# 
+# nestedness_analysis <- function(M, nsim = 1000, null_model_method, plotit=F){
+#   # Nestedness for binary matrices only
+#   M[M>0] <- 1
+#   # Get observed value
+#   nodf <- nestednodf(M)
+#   nodf_obs <- nodf$statistic[3]
+#   # Plot
+#   if (plotit){
+#     print(plot_matrix(M = M, layout = 'nested', method = 'ggplot'))
+#   }
+#   
+#   # If a list of shuffled networks is supplied
+#   if (class(null_model_method)=='list'){ 
+#     nodf_shuffled <- lapply(null_model_method, nestednodf)
+#     nodf_shuffled <- sapply(nodf_shuffled, function(x) x$statistic[3])
+#     pvalue <- sum(nodf_shuffled>nodf$statistic[3])/length(nodf_shuffled)
+#   }
+#   
+#   # If an array of shuffled networks is supplied (rows x cols x num simulations)
+#   if (class(null_model_method)=='array'){ 
+#     nodf_shuffled <- apply(null_model_method, MARGIN = 3, nestednodf)
+#     nodf_shuffled <- sapply(nodf_shuffled, function(x) x$statistic[3])
+#     pvalue <- sum(nodf_shuffled>nodf$statistic[3])/length(nodf_shuffled)
+#   }
+#   
+#   # If using built-in models of shuffling
+#   if (class(null_model_method)=='character'){ #
+#     nodf_eval <- oecosimu(M, nestednodf, method = null_model_method, nsimul = nsim, burnin = 1000)
+#     pvalue <- nodf_eval$oecosimu$pval[3]
+#     nodf_shuffled=nodf_eval$oecosimu$simulated[3,]
+#   }
+#   
+#   # If no shuffling
+#   if (class(null_model_method)=='NULL'){ #
+#     nodf_eval <- NULL
+#     pvalue <- NULL
+#     nodf_shuffled <- NULL
+#   }
+#   
+#   return(list(pvalue=pvalue, nodf_obs=nodf_obs, nodf_shuffled=nodf_shuffled))
+# }
+# 
+# # Wrapper functions to automate nestedness calculations
+# nestedness_wrapper_prob <- function(M, nsim=100, non_zero_rc_thershold = 0.8){
+#   print('Creating shuffled networks...')
+#   M_shuffled_prob <- prob_model_wrapper(M, non_zero_rc_thershold = non_zero_rc_thershold, nsim = nsim)
+#   print('Calculating nestedness for observed and shuffled networks...')
+#   M_nestedness <- nestedness_analysis(M, null_model_method=M_shuffled_prob)
+#   pvalue_hist <- as.tibble(M_nestedness$nodf_shuffled) %>% ggplot(aes(value))+geom_histogram()+geom_vline(xintercept = M_nestedness$nodf_obs)
+#   return(list(pvalue_hist=pvalue_hist, pvalue=M_nestedness$pvalue))
+# }
 
-# A wrapper function for the probabilistic model
-prob_model_wrapper <- function(M, non_zero_rc_thershold=1, nsim=100, write_files=F, file_prefix, folder){
-  shuffled_prob <- list()
-  i <- 1
-  while (i <= nsim){
-    print(paste('Creating network with probabilistic model ',i,'/',nsim,sep=''))
-    x <- prob_model(M)
-    # Because the model is probabilistic it can create degenerate matrices with
-    # rows and/or columns what have no interactinos (sum is 0). Only include the
-    # shuffled matrix if the proportion of non-zero rows and columns it has is
-    # beyond the threshold. By default all rows and cols must have at least one
-    # interaction (threshold of 1).
-    prop_non_zero_rows <- sum(rowSums(x)!=0)/nrow(x)
-    prop_non_zero_cols <- sum(colSums(x)!=0)/ncol(x)
-    if(prop_non_zero_rows>=non_zero_rc_thershold && prop_non_zero_cols>=non_zero_rc_thershold){
-      shuffled_prob[[i]] <- x
-      i <- i+1
-    }
-  }
-  
-  if (write_files){
-    for(i in 1:nsim){
-      x <- shuffled_prob[[i]]
-      file <- paste(folder,'/',file_prefix,'_prob_',i,'.csv',sep='')
-      print(file)
-      write.csv(x, file)
-    }
-  }
-  return(shuffled_prob)
-}
 
-# A function to shuffle a matrix with multiple methods
-shuffle_bipartite_matrix <- function(M, shuff_methods, nsim=10, burnin=1000, write_files=F, file_prefix, folder){
-  shuffled_list <- list()
-  for (sm in shuff_methods){
-    print(sm)
-    null_model <- vegan::nullmodel(M, method = sm)
-    shuffled <- simulate(null_model, nsim = nsim, burnin = burnin)
-    shuffled_list[[which(shuff_methods==sm)]] <- shuffled
-  }
-  names(shuffled_list) <- shuff_methods
-  
-  if (write_files){
-    for (sm in shuff_methods){
-      for(i in 1:nsim){
-        x <- shuffled_list[[which(shuff_methods==sm)]][,,i]
-        file <- paste(folder,'/',file_prefix,'_',sm,'_',i,'.csv',sep='')
-        print(file)
-        write.csv(x, file)
-      }
-    }  
-  }
-  return(shuffled_list)
-}
-
-# Read shuffled networks to a list
-read_shuffled_networks <- function(shuff_methods, nsim=10, file_prefix, folder){
-  require(data.table)
-  shuffled_list <- vector(mode = 'list', length(shuff_methods))
-  names(shuffled_list) <- shuff_methods
-  for (sm in shuff_methods){
-    for (i in 1:nsim){
-      file <- paste(folder,'/',file_prefix,'_',sm,'_',i,'.csv',sep='')
-      x <- fread(file, sep = ',', header = F, stringsAsFactors = F, skip = 1, drop = 1)
-      # Create an array when reading the first matrix
-      if (is.null(shuffled_list[[which(sm==shuff_methods)]])){
-        shuffled_list[[which(sm==shuff_methods)]] <- array(0, dim=list(nrow(x),ncol(x),nsim))
-      }
-      shuffled_list[[which(sm==shuff_methods)]][,,i] <- data.matrix(x)
-    }
-  }
-  return(shuffled_list)
-}
-
-
-# Nestedness --------------------------------------------------------------
-
-nestedness_analysis <- function(M, nsim = 1000, null_model_method, plotit=F){
-  # Nestedness for binary matrices only
-  M[M>0] <- 1
-  # Get observed value
-  nodf <- nestednodf(M)
-  nodf_obs <- nodf$statistic[3]
-  # Plot
-  if (plotit){
-    print(plot_matrix(M = M, layout = 'nested', method = 'ggplot'))
-  }
-  
-  # If a list of shuffled networks is supplied
-  if (class(null_model_method)=='list'){ 
-    nodf_shuffled <- lapply(null_model_method, nestednodf)
-    nodf_shuffled <- sapply(nodf_shuffled, function(x) x$statistic[3])
-    pvalue <- sum(nodf_shuffled>nodf$statistic[3])/length(nodf_shuffled)
-  }
-  
-  # If an array of shuffled networks is supplied (rows x cols x num simulations)
-  if (class(null_model_method)=='array'){ 
-    nodf_shuffled <- apply(null_model_method, MARGIN = 3, nestednodf)
-    nodf_shuffled <- sapply(nodf_shuffled, function(x) x$statistic[3])
-    pvalue <- sum(nodf_shuffled>nodf$statistic[3])/length(nodf_shuffled)
-  }
-  
-  # If using built-in models of shuffling
-  if (class(null_model_method)=='character'){ #
-    nodf_eval <- oecosimu(M, nestednodf, method = null_model_method, nsimul = nsim, burnin = 1000)
-    pvalue <- nodf_eval$oecosimu$pval[3]
-    nodf_shuffled=nodf_eval$oecosimu$simulated[3,]
-  }
-  
-  # If no shuffling
-  if (class(null_model_method)=='NULL'){ #
-    nodf_eval <- NULL
-    pvalue <- NULL
-    nodf_shuffled <- NULL
-  }
-  
-  return(list(pvalue=pvalue, nodf_obs=nodf_obs, nodf_shuffled=nodf_shuffled))
-}
-
-# Wrapper functions to automate nestedness calculations
-nestedness_wrapper_prob <- function(M, nsim=100, non_zero_rc_thershold = 0.8){
-  print('Creating shuffled networks...')
-  M_shuffled_prob <- prob_model_wrapper(M, non_zero_rc_thershold = non_zero_rc_thershold, nsim = nsim)
-  print('Calculating nestedness for observed and shuffled networks...')
-  M_nestedness <- nestedness_analysis(M, null_model_method=M_shuffled_prob)
-  pvalue_hist <- as.tibble(M_nestedness$nodf_shuffled) %>% ggplot(aes(value))+geom_histogram()+geom_vline(xintercept = M_nestedness$nodf_obs)
-  return(list(pvalue_hist=pvalue_hist, pvalue=M_nestedness$pvalue))
-}
-
-
-# Modularity (Q) ----------------------------------------------------------
-
-calculate_Q <- function(M){
-  mod <- computeModules(M)
-  slotNames(mod) # see ?moduleWeb for details
-  return(mod@likelihood) # This is the value of the modularity function Q. NOTICE THE @ SIGN (instead of $).
-}
-
-modularity_analysis <- function(M, num_iterations = 100, null_model_method='curveball'){
-  null_model <- vegan::nullmodel(M, method = null_model_method)
-  shuffled <- simulate(null_model, nsim = num_iterations, burnin=10000)
-  Q_randomized <- apply(shuffled, 3, calculate_Q) # This produces an array with 10 matrices, each of them is a shuffled matrix.
-  Q_obs <- calculate_Q(M)
-  plt_hist <- as.tibble(Q_randomized) %>% 
-    ggplot()+geom_histogram(aes(value))+geom_vline(xintercept = Q_obs, color='red')
-  p_value <- sum(Q_randomized>Q_obs)/num_iterations
-  mod <- computeModules(M)
-  return(list(p_value,plt_hist, mod))
-}
+# # Modularity (Q) ----------------------------------------------------------
+# 
+# calculate_Q <- function(M){
+#   mod <- computeModules(M)
+#   slotNames(mod) # see ?moduleWeb for details
+#   return(mod@likelihood) # This is the value of the modularity function Q. NOTICE THE @ SIGN (instead of $).
+# }
+# 
+# modularity_analysis <- function(M, num_iterations = 100, null_model_method='curveball'){
+#   null_model <- vegan::nullmodel(M, method = null_model_method)
+#   shuffled <- simulate(null_model, nsim = num_iterations, burnin=10000)
+#   Q_randomized <- apply(shuffled, 3, calculate_Q) # This produces an array with 10 matrices, each of them is a shuffled matrix.
+#   Q_obs <- calculate_Q(M)
+#   plt_hist <- as.tibble(Q_randomized) %>% 
+#     ggplot()+geom_histogram(aes(value))+geom_vline(xintercept = Q_obs, color='red')
+#   p_value <- sum(Q_randomized>Q_obs)/num_iterations
+#   mod <- computeModules(M)
+#   return(list(p_value,plt_hist, mod))
+# }
 
 
 # Infomap -----------------------------------------------------------------
@@ -393,143 +400,143 @@ write_infomap <- function(M, node_data, is_bipartite=F, directed=F, filename){
   sink.reset()
 }
 
-write_infomap_simple <- function(M, is_bipartite=T, directed=F, filename){
-  # This function is a simple version of write_infomap because it does not
-  # receive any information on the nodes. It is used for the shuffled networks.
-  N <- nrow(M)+ncol(M)
-  rownames(M) <- 1:nrow(M)
-  colnames(M) <- (nrow(M)+1):N
-  g <- graph.incidence(M, directed = directed, mode = 'all', weighted = T)
-  links <- igraph::as_data_frame(g, what = 'edges')
-  if (is_bipartite){
-    M_transposed <- t(M)
-    g <- graph.incidence(M_transposed, directed = directed, mode = 'all', weighted = T)
-    links_transposed <- igraph::as_data_frame(g, what = 'edges')
-    links <- rbind(links, links_transposed)
-  }
-  
-  unlink(filename)
-  sink(filename, append = T)
-  if(is_bipartite){
-    cat("# A bipartite network parsed as AA^T matrix | No node names | shuffled");cat('\n')
-  } else {
-    cat("# A unipartite network");cat('\n')
-  }
-  cat(paste("*Vertices",N));cat('\n')
-  write.table(data.frame(node=1:N,id=1:N), filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  cat("*Edges ");cat(nrow(links));cat('\n')
-  write.table(links, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  sink.reset()
-}
+# write_infomap_simple <- function(M, is_bipartite=T, directed=F, filename){
+#   # This function is a simple version of write_infomap because it does not
+#   # receive any information on the nodes. It is used for the shuffled networks.
+#   N <- nrow(M)+ncol(M)
+#   rownames(M) <- 1:nrow(M)
+#   colnames(M) <- (nrow(M)+1):N
+#   g <- graph.incidence(M, directed = directed, mode = 'all', weighted = T)
+#   links <- igraph::as_data_frame(g, what = 'edges')
+#   if (is_bipartite){
+#     M_transposed <- t(M)
+#     g <- graph.incidence(M_transposed, directed = directed, mode = 'all', weighted = T)
+#     links_transposed <- igraph::as_data_frame(g, what = 'edges')
+#     links <- rbind(links, links_transposed)
+#   }
+#   
+#   unlink(filename)
+#   sink(filename, append = T)
+#   if(is_bipartite){
+#     cat("# A bipartite network parsed as AA^T matrix | No node names | shuffled");cat('\n')
+#   } else {
+#     cat("# A unipartite network");cat('\n')
+#   }
+#   cat(paste("*Vertices",N));cat('\n')
+#   write.table(data.frame(node=1:N,id=1:N), filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   cat("*Edges ");cat(nrow(links));cat('\n')
+#   write.table(links, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   sink.reset()
+# }
 
-# This function is a wrapper for write_infomap and write_infomap_simple. It
-# receives an observed matrix and an array of corresponding shuffled matrices
-# (row x col x randomization). It calculates the map equation and returns
-# p-values and histograms.
-# Infomap_wrapper <- function(Z, shuffled_matrices, bipartite_groups, file_prefix, infomap_executable='Infomap_01923'){
-Infomap_wrapper <- function(Z, shuffled_matrices, bipartite_groups, file_prefix, infomap_executable='Infomap'){
-  node_data <- get_node_data_infomap(Z, is_bipartite = T, bipartite_groups = bipartite_groups)
-  file_obs <- paste(file_prefix,'_Infomap.txt',sep='')
-  write_infomap(Z, node_data, is_bipartite = T, directed = F, file_obs)
-  system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -N 20 --tree -2 --silent',sep=''))
-  file_obs_output <- str_replace(file_obs, 'txt','tree')
-  node_data_obs <- parse_modules(file_obs_output, infomap_bipartite_format = F, node_data, T)
-  
-  for (sm in names(shuffled_matrices)){
-    for(i in 1:dim(shuffled_matrices[[1]])[3]){
-      x <- shuffled_matrices[[which(names(shuffled_matrices)==sm)]][,,i]
-      file_shuff <- paste('shuffled/',file_prefix,'_',sm,'_',i,'_infomap.txt',sep='')
-      print(file_shuff)
-      write_infomap_simple(x, is_bipartite = T, directed = F, filename = file_shuff)
-      system(paste('./',infomap_executable,' ',file_shuff,' shuffled/ -i pajek -N 1 --tree -2 --silent',sep=''))
-    }
-  }  
-  
-  # Compare codelength between observed and shuffled networks
-  x <- readLines(file_obs_output)[1]
-  codelength_obs <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][2,1],str_length(x)))
-  codelength_obs_1level <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][1,1],str_length(x)))
-  codelength_obs_normalized <- codelength_obs/codelength_obs_1level
-  # tree_files <- list.files(pattern='.tree', path = '~/Documents/CRISPR/shuffled/', full.names = T)
-  tree_files <- list.files(pattern='.tree', path = 'shuffled/', full.names = T)
-  tree_files <- tree_files[str_detect(tree_files, file_prefix)]
-  codelength_table <- map(tree_files,
-                          function(t){
-                            x <- str_split(t,'_')[[1]]
-                            run <- parse_number(x[4])
-                            sm <- x[3]                         
-                            x <- readLines(t)[1]
-                            codelength <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][2,1],str_length(x)))
-                            codelength_1level <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][1,1],str_length(x)))
-                            codelength_normalized <- codelength/codelength_1level
-                            return(tibble(shuff_method=sm, run , codelength, codelength_1level, codelength_normalized))
-                          }) %>% bind_rows()
-  
-  # It is crucial that the condition here would be <= because if there is one
-  # module than the normalized value is always 1.
-  p_value_table <- codelength_table %>% 
-    mutate(test=codelength_normalized <= codelength_obs_normalized) %>% 
-    group_by(shuff_method) %>% summarise(cl_obs=codelength_obs_normalized, 
-                                         cln_shuff_mean=mean(codelength_normalized), 
-                                         cln_shuff_sd=sd(codelength_normalized), 
-                                         pvalue=sum(test)/length(test))
-  
-  p_value_plot <- codelength_table %>% ggplot(aes(codelength_normalized,fill=shuff_method))+
-    geom_histogram(binwidth=0.02)+
-    facet_wrap(~shuff_method)+
-    geom_vline(xintercept = codelength_obs_normalized)
-  
-  return(list(node_data_obs=node_data_obs, p_value_table=p_value_table, p_value_plot=p_value_plot))
-}
+# # This function is a wrapper for write_infomap and write_infomap_simple. It
+# # receives an observed matrix and an array of corresponding shuffled matrices
+# # (row x col x randomization). It calculates the map equation and returns
+# # p-values and histograms.
+# # Infomap_wrapper <- function(Z, shuffled_matrices, bipartite_groups, file_prefix, infomap_executable='Infomap_01923'){
+# Infomap_wrapper <- function(Z, shuffled_matrices, bipartite_groups, file_prefix, infomap_executable='Infomap'){
+#   node_data <- get_node_data_infomap(Z, is_bipartite = T, bipartite_groups = bipartite_groups)
+#   file_obs <- paste(file_prefix,'_Infomap.txt',sep='')
+#   write_infomap(Z, node_data, is_bipartite = T, directed = F, file_obs)
+#   system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -N 20 --tree -2 --silent',sep=''))
+#   file_obs_output <- str_replace(file_obs, 'txt','tree')
+#   node_data_obs <- parse_modules(file_obs_output, infomap_bipartite_format = F, node_data, T)
+#   
+#   for (sm in names(shuffled_matrices)){
+#     for(i in 1:dim(shuffled_matrices[[1]])[3]){
+#       x <- shuffled_matrices[[which(names(shuffled_matrices)==sm)]][,,i]
+#       file_shuff <- paste('shuffled/',file_prefix,'_',sm,'_',i,'_infomap.txt',sep='')
+#       print(file_shuff)
+#       write_infomap_simple(x, is_bipartite = T, directed = F, filename = file_shuff)
+#       system(paste('./',infomap_executable,' ',file_shuff,' shuffled/ -i pajek -N 1 --tree -2 --silent',sep=''))
+#     }
+#   }  
+#   
+#   # Compare codelength between observed and shuffled networks
+#   x <- readLines(file_obs_output)[1]
+#   codelength_obs <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][2,1],str_length(x)))
+#   codelength_obs_1level <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][1,1],str_length(x)))
+#   codelength_obs_normalized <- codelength_obs/codelength_obs_1level
+#   # tree_files <- list.files(pattern='.tree', path = '~/Documents/CRISPR/shuffled/', full.names = T)
+#   tree_files <- list.files(pattern='.tree', path = 'shuffled/', full.names = T)
+#   tree_files <- tree_files[str_detect(tree_files, file_prefix)]
+#   codelength_table <- map(tree_files,
+#                           function(t){
+#                             x <- str_split(t,'_')[[1]]
+#                             run <- parse_number(x[4])
+#                             sm <- x[3]                         
+#                             x <- readLines(t)[1]
+#                             codelength <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][2,1],str_length(x)))
+#                             codelength_1level <- parse_number(str_sub(x, str_locate_all(x,'codelength ')[[1]][1,1],str_length(x)))
+#                             codelength_normalized <- codelength/codelength_1level
+#                             return(tibble(shuff_method=sm, run , codelength, codelength_1level, codelength_normalized))
+#                           }) %>% bind_rows()
+#   
+#   # It is crucial that the condition here would be <= because if there is one
+#   # module than the normalized value is always 1.
+#   p_value_table <- codelength_table %>% 
+#     mutate(test=codelength_normalized <= codelength_obs_normalized) %>% 
+#     group_by(shuff_method) %>% summarise(cl_obs=codelength_obs_normalized, 
+#                                          cln_shuff_mean=mean(codelength_normalized), 
+#                                          cln_shuff_sd=sd(codelength_normalized), 
+#                                          pvalue=sum(test)/length(test))
+#   
+#   p_value_plot <- codelength_table %>% ggplot(aes(codelength_normalized,fill=shuff_method))+
+#     geom_histogram(binwidth=0.02)+
+#     facet_wrap(~shuff_method)+
+#     geom_vline(xintercept = codelength_obs_normalized)
+#   
+#   return(list(node_data_obs=node_data_obs, p_value_table=p_value_table, p_value_plot=p_value_plot))
+# }
 
 
+# 
+# write_infomap_bipartite <- function(M, node_data, filename){
+#   # This function prepares data to use with Infomap's bipartite structure of
+#   # features and nodes (see
+#   # http://www.mapequation.org/code.html#Bipartite-format). It assumes nodes are
+#   # in the columns and features are in the rows. node_data should be organized
+#   # with nodes first and features afterwards. node_data must have columns:
+#   # nodeName (character), InfomapCode (nX or fX where n and f are nodes or
+#   # features and X is a number (see mapequaion.org)), InfomapGroup (n or f), and
+#   # runningID (sequential number from 1 to the total number of nodes).
+#   colnames(M) <- node_data$InfomapCode[match(colnames(M), node_data$nodeName)]
+#   rownames(M) <- node_data$InfomapCode[match(rownames(M), node_data$nodeName)]
+#   g <- graph.incidence(M, directed = F, mode = 'all', weighted = T)
+#   links <- igraph::as_data_frame(g, what = 'edges')
+#   unlink(filename)
+#   sink(filename, append = T)
+#   cat("# A bipartite network with node names");cat('\n')
+#   cat(paste("*Vertices",ncol(M)));cat('\n')
+#   write.table(subset(node_data, InfomapGroup=='n',select=c(runningID, InfomapName)), filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   cat("*Edges ");cat(nrow(links));cat('\n')
+#   write.table(links, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   sink.reset()
+# }
 
-write_infomap_bipartite <- function(M, node_data, filename){
-  # This function prepares data to use with Infomap's bipartite structure of
-  # features and nodes (see
-  # http://www.mapequation.org/code.html#Bipartite-format). It assumes nodes are
-  # in the columns and features are in the rows. node_data should be organized
-  # with nodes first and features afterwards. node_data must have columns:
-  # nodeName (character), InfomapCode (nX or fX where n and f are nodes or
-  # features and X is a number (see mapequaion.org)), InfomapGroup (n or f), and
-  # runningID (sequential number from 1 to the total number of nodes).
-  colnames(M) <- node_data$InfomapCode[match(colnames(M), node_data$nodeName)]
-  rownames(M) <- node_data$InfomapCode[match(rownames(M), node_data$nodeName)]
-  g <- graph.incidence(M, directed = F, mode = 'all', weighted = T)
-  links <- igraph::as_data_frame(g, what = 'edges')
-  unlink(filename)
-  sink(filename, append = T)
-  cat("# A bipartite network with node names");cat('\n')
-  cat(paste("*Vertices",ncol(M)));cat('\n')
-  write.table(subset(node_data, InfomapGroup=='n',select=c(runningID, InfomapName)), filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  cat("*Edges ");cat(nrow(links));cat('\n')
-  write.table(links, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  sink.reset()
-}
-
-write_infomap_bipartite_simple <- function(data, filename){
-  # This function is a simple version of write_infomap_bipartite because it does not
-  # receive any information on the nodes. It is used for the shuffled networks.
-  nodes <- data.frame(id=1:ncol(data),name=colnames(data),name_output=paste('"',colnames(data),'"',sep = ''))
-  features <- data.frame(id=(1:nrow(data)),name=rownames(data), name_output=paste('"',rownames(data),'"',sep = ''))
-  g <- graph.incidence(data, directed = F, mode = 'all', weighted = T)
-  df <- igraph::as_data_frame(g, what = 'edges')
-  df$to <- nodes$id[match(as.character(df$to), as.character(nodes$name))]
-  df$from <- features$id[match(as.character(df$from), as.character(features$name))]
-  df$from <- paste('f',df$from,sep='')
-  df$to <- paste('n',df$to,sep='')
-  unlink(filename)
-  sink(filename, append = T)
-  cat("# A bipartite network with node names");cat('\n')
-  cat(paste("*Vertices",nrow(nodes)));cat('\n')
-  write.table(nodes[,c(1,3)], filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  cat("*Edges ");cat(nrow(df));cat('\n')
-  write.table(df, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
-  sink.reset()
-}
+# write_infomap_bipartite_simple <- function(data, filename){
+#   # This function is a simple version of write_infomap_bipartite because it does not
+#   # receive any information on the nodes. It is used for the shuffled networks.
+#   nodes <- data.frame(id=1:ncol(data),name=colnames(data),name_output=paste('"',colnames(data),'"',sep = ''))
+#   features <- data.frame(id=(1:nrow(data)),name=rownames(data), name_output=paste('"',rownames(data),'"',sep = ''))
+#   g <- graph.incidence(data, directed = F, mode = 'all', weighted = T)
+#   df <- igraph::as_data_frame(g, what = 'edges')
+#   df$to <- nodes$id[match(as.character(df$to), as.character(nodes$name))]
+#   df$from <- features$id[match(as.character(df$from), as.character(features$name))]
+#   df$from <- paste('f',df$from,sep='')
+#   df$to <- paste('n',df$to,sep='')
+#   unlink(filename)
+#   sink(filename, append = T)
+#   cat("# A bipartite network with node names");cat('\n')
+#   cat(paste("*Vertices",nrow(nodes)));cat('\n')
+#   write.table(nodes[,c(1,3)], filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   # write.table(features[,c(1,3)], 'infomap_input.txt', sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   cat("*Edges ");cat(nrow(df));cat('\n')
+#   write.table(df, filename, sep = ' ', row.names = F, col.names = F, quote = F, append = T)
+#   sink.reset()
+# }
 
 # Extract module composition and map the modules to nodes
 parse_modules <- function(file, infomap_bipartite_format=F, node_data, assign_colors=F){
