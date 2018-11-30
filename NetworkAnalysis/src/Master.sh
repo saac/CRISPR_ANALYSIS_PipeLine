@@ -10,9 +10,9 @@ cd R_NetworkAnalysis/
 ./RAnalysis.sh $1
 cd ..
 
-cd MOD/
-./Modularity.sh ../Networks_$1/
-cd ..
+# cd MOD/
+# ./Modularity.sh ../Networks_$1/
+# cd ..
 
 
 

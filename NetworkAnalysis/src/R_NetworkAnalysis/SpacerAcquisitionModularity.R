@@ -13,9 +13,9 @@ library(igraph)
 source('Functions.R')
 
 
-nsim=100
-folder_shuffled <- 'shuffled/'
-shuffle_models <- c('r0','c0','curveball')
+# nsim=100
+# folder_shuffled <- 'shuffled/'
+# shuffle_models <- c('r0','c0','curveball')
 
 args <- commandArgs(trailingOnly = TRUE)
 argument = args[1]
@@ -35,15 +35,15 @@ spacer_by_bact <- incidence_matrix_to_list(spacer_by_bact)
 network <- spacer_by_bact$M
 network <- t(network)
 
-# Create shuffled networks ------------------------------------------------
-file_prefix <- name
-x <- shuffle_bipartite_matrix(network, shuffle_models, nsim=nsim, burnin=1000, write_files=T, file_prefix=file_prefix, folder=folder_shuffled)
-y <- prob_model_wrapper(network, non_zero_rc_thershold = 0.85, nsim = nsim, write_files = T, file_prefix = file_prefix, folder = folder_shuffled)
-
-# Read shuffled matrices --------------------------------------------------
-file_prefix <- name
-network_shuffled <- read_shuffled_networks(shuff_methods = shuffle_models, file_prefix = file_prefix, nsim = nsim, folder = folder_shuffled)
-sapply(network_shuffled, dim)
+# # Create shuffled networks ------------------------------------------------
+# file_prefix <- name
+# x <- shuffle_bipartite_matrix(network, shuffle_models, nsim=nsim, burnin=1000, write_files=T, file_prefix=file_prefix, folder=folder_shuffled)
+# y <- prob_model_wrapper(network, non_zero_rc_thershold = 0.85, nsim = nsim, write_files = T, file_prefix = file_prefix, folder = folder_shuffled)
+# 
+# # Read shuffled matrices --------------------------------------------------
+# file_prefix <- name
+# network_shuffled <- read_shuffled_networks(shuff_methods = shuffle_models, file_prefix = file_prefix, nsim = nsim, folder = folder_shuffled)
+# sapply(network_shuffled, dim)
 
 # print(network_shuffled)
 
@@ -51,7 +51,8 @@ sapply(network_shuffled, dim)
 
 prt = paste(name,' acquisition:',sep="");
 print(prt)
-x <- Infomap_wrapper(Z = network, shuffled_matrices = network_shuffled, bipartite_groups = c('Spacer','Bacteria'), file_prefix = name)
+# x <- Infomap_wrapper(Z = network, shuffled_matrices = network_shuffled, bipartite_groups = c('Spacer','Bacteria'), file_prefix = name)
+x <- Infomap_wrapper_NoShuffled(Z = network, bipartite_groups = c('Spacer','Bacteria'), file_prefix = name)
 x$p_value_table
 
 nameTitle = paste(name," acquisition",sep="");
@@ -61,10 +62,16 @@ fortitle = strsplit(name, '_')
 title = paste("Bacteria Spacer acquisition modularity from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
 # print(title)
 
-x$p_value_plot+labs(title=nameTitle)
+# x$p_value_plot+labs(title=nameTitle)
 
 # pdf(out, paper="USr");
-png(out, height = 600, width = 1000, units = "px",);
+
+# png(out, height = 600, width = 1000, units = "px");
+# png(out, height = 768, width = 1024, units = "px",res = 600);
+# png(out, height = 800, width = 1380, units = "px",res = 600);
+# png(out, height = 800, width = 1380, units = "px");
+png(out, height = 1000, width = 2000, units = "px");
+
 # png(out);
 # plot_matrix(network, layout = 'nested', method = 'ggplot', title=title, x_title='Bacteria strains', y_title='Virus strains')
 ggplot_bipartite_modules(Z=network, x$node_data_obs, module_numbers = F, color_tick_labels = T, border=F, text_size = 18, title=title, xlab='Spacer ID', ylab='Bacteria strain')

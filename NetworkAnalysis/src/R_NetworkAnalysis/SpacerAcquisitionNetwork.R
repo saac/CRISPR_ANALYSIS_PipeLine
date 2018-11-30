@@ -37,7 +37,14 @@ title = paste("SAN from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1
 # print(title)
 
 # pdf(out, paper="USr");
-png(out, height = 1600, width = 1000, units = "px",);
+
+# png(out, height = 1600, width = 1000, units = "px",);
+# png(out, height = 768, width = 1024, units = "px",res = 600);
+# png(out, height = 800, width = 1380, units = "px",res = 600);
+# png(out, height = 1600, width = 1380, units = "px",res = 600);
+# png(out, height = 1600, width = 1380, units = "px");
+png(out, height = 1000, width = 2000, units = "px");
+
 plot_matrix(network, layout = 'diagonal', method = 'ggplot', binary_cols = c('white','orange'), title=title, x_title='Spacers', y_title='Bacteria strains')+theme(legend.position = 'none')
 dev.off();
 

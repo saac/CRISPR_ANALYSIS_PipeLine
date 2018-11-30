@@ -37,7 +37,13 @@ title = paste("Immunity Network from Simlated Data ","\n ",fortitle[[1]][5]," = 
 # print(title)
 
 # pdf(out, paper="USr");
-png(out, height = 600, width = 1000, units = "px",);
+
+# png(out, height = 600, width = 1000, units = "px");
+# png(out, height = 768, width = 1024, units = "px",res = 600);
+# png(out, height = 800, width = 1380, units = "px",res = 600);
+# png(out, height = 1000, width = 1380, units = "px");
+png(out, height = 1000, width = 2000, units = "px");
+
 # png(out);
 plot_matrix(network, layout = 'nested', method = 'ggplot', title=title, x_title='Bacteria strains', y_title='Virus strains')
 dev.off();
