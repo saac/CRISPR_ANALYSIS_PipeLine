@@ -76,17 +76,17 @@ ggplot_bipartite_modules <- function(Z, node_data_obs, module_numbers=F, color_t
 #   module_colors <- c('gray50',unique(Set1_modules$color1))
   
   
+  M %<>% filter(value==1) %>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
+    mutate(value_mod=ifelse(edge_in_out=='in',module1,0)) %>% 
+    mutate(Set1=factor(Set1, levels=Set1_modules$Set1), Set2=factor(Set2, levels=Set2_modules$Set2)) 
+
   if (all(M$edge_in_out=='in')){
     module_colors <- unique(Set1_modules$color1)
   } else {
     module_colors <- c('gray50',unique(Set1_modules$color1))
-  }  
-  
-  
-  M %<>% filter(value==1) %>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
-    mutate(value_mod=ifelse(edge_in_out=='in',module1,0)) %>% 
-    mutate(Set1=factor(Set1, levels=Set1_modules$Set1), Set2=factor(Set2, levels=Set2_modules$Set2)) 
-  
+  }      
+    
+    
   if (border){
     p <- M %>% 
       ggplot()+
