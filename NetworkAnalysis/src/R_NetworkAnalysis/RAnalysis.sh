@@ -24,7 +24,7 @@ do
 
 done
 
-for i in $(ls ../Networks_$1/Bipartite_MATRIX_mu1e-7_*)
+for i in $(ls ../Networks_$1/Bipartite_MATRIX_*)
 do
         echo $i
 #         Rscript ArgsTest.R $i 
@@ -44,7 +44,7 @@ do
 done
 
 # mkdir shuffled
-for i in $(ls ../Networks_$1/Bipartite_MATRIX_mu1e-7_*)
+for i in $(ls ../Networks_$1/Bipartite_MATRIX_*)
 do
         echo $i
 #         Rscript ArgsTest.R $i 
