@@ -3,7 +3,7 @@
 # ./RUNPipeLine.sh T1 T2 FilePrefix-sed
 # ./RUNPipeLine.sh 0 50 mu1e-7_initialDiffDp10_S10P15_R-1987
 
-
+./FULLPlots.sh 0 $2
 
 
 # T1=$(($1 - 50))
@@ -78,7 +78,7 @@ do
     cp ProtospacerAcquisitionModularity_mu1e-7_$i_*.png ../../ProtospacerAcquisitionModularity
     
     cd ../..
-#     rm -rf $i
+    rm -rf $i
 
 done
 
@@ -121,4 +121,10 @@ mv ImmunityNetwork $3_RESULTS_$1_$2/
 mv ImmunityNetwork-Modularity $3_RESULTS_$1_$2/
 mv SpacerAcquisitionModularity $3_RESULTS_$1_$2/
 mv ProtospacerAcquisitionModularity $3_RESULTS_$1_$2/
+
+rm tmp
+mv *_$3_Bacteria-abundance.png $3_RESULTS_$1_$2/
+mv *_$3_Phage-abundance.png $3_RESULTS_$1_$2/
+
+
 
