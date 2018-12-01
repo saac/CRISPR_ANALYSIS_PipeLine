@@ -69,13 +69,13 @@ do
     cd R_NetworkAnalysis
 
     
-    cp SpacerAcquisitionNetwork_mu1e-7_$i_*.png ../../SpacerAcquisitionNetwork
-    cp ProtoSpacerAcquisitionNetwork_mu1e-7_$i_*.png ../../ProtoSpacerAcquisitionNetwork    
-    cp ImmunityNetwork_mu1e-7_$i_*.png ../../ImmunityNetwork
+    cp SpacerAcquisitionNetwork_$3_$i_*.png ../../SpacerAcquisitionNetwork
+    cp ProtoSpacerAcquisitionNetwork_$3_$i_*.png ../../ProtoSpacerAcquisitionNetwork    
+    cp ImmunityNetwork_$3_$i_*.png ../../ImmunityNetwork
 
-    cp ImmunityNetwork-Modularity_mu1e-7_$i_*.png ../../ImmunityNetwork-Modularity    
-    cp SpacerAcquisitionModularity_mu1e-7_$i_*.png ../../SpacerAcquisitionModularity
-    cp ProtospacerAcquisitionModularity_mu1e-7_$i_*.png ../../ProtospacerAcquisitionModularity
+    cp ImmunityNetwork-Modularity_$3_$i_*.png ../../ImmunityNetwork-Modularity    
+    cp SpacerAcquisitionModularity_$3_$i_*.png ../../SpacerAcquisitionModularity
+    cp ProtospacerAcquisitionModularity_$3_$i_*.png ../../ProtospacerAcquisitionModularity
     
     cd ../..
     rm -rf $i
