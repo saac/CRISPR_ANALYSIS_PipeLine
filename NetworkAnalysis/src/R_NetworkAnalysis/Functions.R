@@ -57,7 +57,7 @@ plot_matrix <- function(M, layout='random', method = 'ggplot', binary_cols=c('gr
 # Plot with ggplot and color the modules. Must get the matrix Z and the node
 # data with columns: nodeName, module, color.
 
-ggplot_bipartite_modules <- function(Z, node_data_obs, module_numbers=F, color_tick_labels=T, border=F, border_width=0.5, text_size=18, title=NULL, xlab=NULL, ylab=NULL){
+ggplot_bipartite_modules <- function(Z, node_data_obs, module_numbers=F, color_tick_labels=T, border=F, border_width=0.5, text_size=18, title=NULL, xlab=NULL, ylab=NULL, weighted=F){
   
   M_set1 <- M_set2 <- as.tibble(reshape2::melt(Z))
   names(M_set1)[1] <- 'nodeName'
@@ -75,10 +75,15 @@ ggplot_bipartite_modules <- function(Z, node_data_obs, module_numbers=F, color_t
   Set2_modules <- with(Set2_modules, Set2_modules[order(module2,Set2),])
 #   module_colors <- c('gray50',unique(Set1_modules$color1))
   
-  
-  M %<>% filter(value==1) %>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
-    mutate(value_mod=ifelse(edge_in_out=='in',module1,0)) %>% 
-    mutate(Set1=factor(Set1, levels=Set1_modules$Set1), Set2=factor(Set2, levels=Set2_modules$Set2)) 
+  if (weighted){  
+    M %<>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
+        mutate(value_mod=ifelse(edge_in_out=='in',module1,0)) %>% 
+        mutate(Set1=factor(Set1, levels=Set1_modules$Set1), Set2=factor(Set2, levels=Set2_modules$Set2)) 
+  } else {    
+    M %<>% filter(value==1) %>% mutate(edge_in_out=ifelse(module1==module2,'in','out')) %>% 
+        mutate(value_mod=ifelse(edge_in_out=='in',module1,0)) %>% 
+        mutate(Set1=factor(Set1, levels=Set1_modules$Set1), Set2=factor(Set2, levels=Set2_modules$Set2))     
+  }     
 
   if (all(M$edge_in_out=='in')){
     module_colors <- unique(Set1_modules$color1)
@@ -574,7 +579,9 @@ Infomap_wrapper_NoShuffled <- function(Z, bipartite_groups, file_prefix, infomap
   node_data <- get_node_data_infomap(Z, is_bipartite = T, bipartite_groups = bipartite_groups)
   file_obs <- paste(file_prefix,'_Infomap.txt',sep='')
   write_infomap(Z, node_data, is_bipartite = T, directed = F, file_obs)
-  system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -N 20 --tree -2 --silent',sep=''))
+#   system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -N 20 --tree -2 --silent',sep=''))
+  system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -N 100 --tree -2 --silent',sep=''))
+#   system(paste('./',infomap_executable,' ',file_obs,' . -i pajek -s $(echo $RANDOM) -N 100 --tree -2 --silent',sep=''))
   file_obs_output <- str_replace(file_obs, 'txt','tree')
   node_data_obs <- parse_modules(file_obs_output, infomap_bipartite_format = F, node_data, T)
   

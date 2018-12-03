@@ -15,3 +15,4 @@ mkdir Networks_$3
 mv *Network*_R-* Networks_$3
 mv *pacers-by* Networks_$3
 mv Bipartite_MATRIX* Networks_$3
+mv BipartieInfection_MATRIX* Networks_$3

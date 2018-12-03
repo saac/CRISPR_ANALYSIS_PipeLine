@@ -88,7 +88,49 @@ def BipartieMatrix(virus_file,bacteria_slide,virus_slide,slide):
     output.close() 
     
     
+def BipartieInfectionMatrix(virus_file,bacteria_slide,virus_slide,slide):
+
+    nombre = virus_file.split("data-phage.txt")
+    output = open('BipartieInfection_MATRIX_'+str(nombre[0])+'Time_'+str(slide)+'.txt',"w")
     
+    output.write("\t")
+    TotBabun = 0.0
+    #TotVabun = 0.0
+    for i in bacteria_slide:
+        B,bstr = Spacers(i)
+        Babun = float(i[3])
+        TotBabun = TotBabun + Babun
+        output.write("B_%s\t" % (str(int(bstr))))
+    output.write("\n")
+    
+    #for i in virus_slide:
+        #Vabun = float(i[3])
+        #TotVabun = TotVabun + Vabun
+    
+    #Vmax = MaxAbundance(virus_slide)
+    #print Vmax    
+
+    for i in virus_slide:
+        V,vstr = Protospacers(i)
+        Vabun = float(i[3])
+        output.write("V_%s\t" % (str(int(vstr))))
+        
+        for j in bacteria_slide:
+            B,bstr = Spacers(j)
+            Babun = float(j[3])
+            tmp = np.intersect1d(B, V)           
+            
+            if len(tmp) == 0:
+                w = (Babun*Vabun)/TotBabun      
+                #w = (Babun*Vabun)/(TotBabun*Vmax)
+                #w = (Babun*Vabun)/(TotBabun*TotVabun)
+                output.write("%s\t" % (str(w)))
+                #output.write("B_%s\tV_%s\t%s\n" % (str(int(bstr)), str(int(vstr)), str(w)))                
+            else:
+                output.write("0\t")
+        output.write("\n")
+            
+    output.close()     
     
     
     
@@ -298,6 +340,13 @@ def InfectionNetwork(virus_file,bacteria_slide,virus_slide,slide):
     nombre = virus_file.split("data-phage.txt")
     output = open('Infection_Network_'+str(nombre[0])+'Time_'+str(slide)+'.txt',"w")
     
+    TotBabun = 0.0
+    for i in bacteria_slide:
+        Babun = float(i[3])
+        TotBabun = TotBabun + Babun
+    
+    #print TotBabun
+    
     for i in bacteria_slide:
         B,bstr = Spacers(i)
         Babun = float(i[3])
@@ -306,7 +355,7 @@ def InfectionNetwork(virus_file,bacteria_slide,virus_slide,slide):
             tmp = np.intersect1d(B, V)
             Vabun = float(j[3])
             if len(tmp) == 0:
-                w = Babun*Vabun
+                w = (Babun*Vabun)/TotBabun
                 #output.write("B_%s\tV_%s\t%s,%s\n" % (str(int(bstr)), str(int(vstr)), str(Babun), str(Vabun)))
                 output.write("B_%s\tV_%s\t%s\n" % (str(int(bstr)), str(int(vstr)), str(w)))                
             
@@ -376,29 +425,31 @@ slide = int(sys.argv[3])
 virus_slide = Snapshoot(virus_file,slide)
 bacteria_slide = Snapshoot(bacteria_file,slide)
 
-print "----------- Bipartite: -----------------"
-BipartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
-print "----------- Similarity Bacteria: -----------------"
-SimilarityBacteriaNetwork(bacteria_file,bacteria_slide,slide)
-print "----------- Similarity Virus: -----------------"
-SimilarityVirusNetwork(virus_file,virus_slide,slide)
-print "----------- Tripartite: -----------------"
-TripartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
+#print "----------- Bipartite: -----------------"
+#BipartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
+#print "----------- Similarity Bacteria: -----------------"
+#SimilarityBacteriaNetwork(bacteria_file,bacteria_slide,slide)
+#print "----------- Similarity Virus: -----------------"
+#SimilarityVirusNetwork(virus_file,virus_slide,slide)
+#print "----------- Tripartite: -----------------"
+#TripartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
 
-print "#########################################################"
+#print "#########################################################"
 
-print "----------- Bipartie Matrix: -----------------"
-BipartieMatrix(virus_file,bacteria_slide,virus_slide,slide)
-print "----------- Protospacers by Virus Matrix: -----------------"
-ProtospacersByVirus(virus_file,virus_slide,slide)
-print "----------- Spacers by Bacteria Matrix: -----------------"
-SpacersByBacteria(bacteria_file,bacteria_slide,slide)
+#print "----------- Bipartie Matrix: -----------------"
+#BipartieMatrix(virus_file,bacteria_slide,virus_slide,slide)
+#print "----------- Protospacers by Virus Matrix: -----------------"
+#ProtospacersByVirus(virus_file,virus_slide,slide)
+#print "----------- Spacers by Bacteria Matrix: -----------------"
+#SpacersByBacteria(bacteria_file,bacteria_slide,slide)
 
-print "#########################################################"
+#print "#########################################################"
 
-print "----------- DisSimilarity Virus: -----------------"
-UNSimilarityVirusNetwork(virus_file,virus_slide,slide)
+#print "----------- DisSimilarity Virus: -----------------"
+#UNSimilarityVirusNetwork(virus_file,virus_slide,slide)
 
 
 print "----------- Infection Network: -----------------"
 InfectionNetwork(virus_file,bacteria_slide,virus_slide,slide)
+print "----------- Bipartie Infection Matrix: -----------------"
+BipartieInfectionMatrix(virus_file,bacteria_slide,virus_slide,slide)

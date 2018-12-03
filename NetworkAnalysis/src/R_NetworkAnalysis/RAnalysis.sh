@@ -32,9 +32,16 @@ do
 
 done
 
+for i in $(ls ../Networks_$1/BipartieInfection_MATRIX_*)
+do
+        echo $i
+#         Rscript ArgsTest.R $i 
+        Rscript InfectionNetwork.R $i
+done
 
 
-mkdir shuffled
+
+# mkdir shuffled
 for i in $(ls ../Networks_$1/Spacers-by-bacteria_*)
 do
         echo $i
@@ -50,6 +57,14 @@ do
 #         Rscript ArgsTest.R $i 
         Rscript ImmunityNetworkModularity.R $i
 
+done
+
+
+for i in $(ls ../Networks_$1/BipartieInfection_MATRIX_*)
+do
+        echo $i
+#         Rscript ArgsTest.R $i 
+        Rscript InfectionNetworkModularity.R $i
 done
 
 
