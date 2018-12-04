@@ -3,13 +3,7 @@
 # ./RUNPipeLine.sh T1 T2 FilePrefix-sed
 # ./RUNPipeLine.sh 0 50 mu1e-7_initialDiffDp10_S10P15_R-1987
 
-# ./FULLPlots.sh 0 $2
-
-
-# T1=$(($1 - 50))
-# T2=$(($1 + 50))
-# T1=$(($1 - 10))
-# T2=$(($1 + 10))
+./FULLPlots.sh 0 $2
 
 
 # mkdir Bacteria-abundance
@@ -51,7 +45,7 @@ mkdir InfectionNetwork-Modularity
 #     cp ProtospacerAcquisitionModularity_mu1e-7_$i_*.png ../../ProtospacerAcquisitionModularity
 #     
 #     cd ../..
-# #     rm -rf $i
+#     rm -rf $i
 # 
 # done
 
@@ -60,10 +54,8 @@ mkdir InfectionNetwork-Modularity
 for i in $(seq $1 10 $2)
 do
     echo $i
-#     ./SUPERMaster.sh mu1e-7_initialDiffDp1_S10P15_R-12499 $i
     ./PipeLine.sh $3 $i
     
-#     echo Networks_$2
     cd $i 
     
 #     cp *Phage-abundance* ../Phage-abundance
@@ -87,32 +79,6 @@ do
     rm -rf $i
 
 done
-
-# mkdir RESULTS_$1
-# 
-# mv Bacteria-abundance RESULTS_$1/
-# mv Phage-abundance RESULTS_$1/
-# 
-# mv SpacerAcquisitionNetwork RESULTS_$1/
-# mv ProtoSpacerAcquisitionNetwork RESULTS_$1/
-# mv ImmunityNetwork RESULTS_$1/
-# 
-# mv ImmunityNetwork-Modularity RESULTS_$1/
-# mv SpacerAcquisitionModularity RESULTS_$1/
-# mv ProtospacerAcquisitionModularity RESULTS_$1/
-
-# mkdir RESULTS_$1_$2
-# 
-# mv Bacteria-abundance RESULTS_$1_$2/
-# mv Phage-abundance RESULTS_$1_$2/
-# 
-# mv SpacerAcquisitionNetwork RESULTS_$1_$2/
-# mv ProtoSpacerAcquisitionNetwork RESULTS_$1_$2/
-# mv ImmunityNetwork RESULTS_$1_$2/
-# 
-# mv ImmunityNetwork-Modularity RESULTS_$1_$2/
-# mv SpacerAcquisitionModularity RESULTS_$1_$2/
-# mv ProtospacerAcquisitionModularity RESULTS_$1_$2/
 
 
 mkdir $3_RESULTS_$1_$2

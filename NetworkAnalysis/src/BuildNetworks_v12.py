@@ -425,28 +425,28 @@ slide = int(sys.argv[3])
 virus_slide = Snapshoot(virus_file,slide)
 bacteria_slide = Snapshoot(bacteria_file,slide)
 
-#print "----------- Bipartite: -----------------"
-#BipartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
-#print "----------- Similarity Bacteria: -----------------"
-#SimilarityBacteriaNetwork(bacteria_file,bacteria_slide,slide)
-#print "----------- Similarity Virus: -----------------"
-#SimilarityVirusNetwork(virus_file,virus_slide,slide)
-#print "----------- Tripartite: -----------------"
-#TripartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
+print "----------- Bipartite: -----------------"
+BipartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
+print "----------- Similarity Bacteria: -----------------"
+SimilarityBacteriaNetwork(bacteria_file,bacteria_slide,slide)
+print "----------- Similarity Virus: -----------------"
+SimilarityVirusNetwork(virus_file,virus_slide,slide)
+print "----------- Tripartite: -----------------"
+TripartieNetwork(virus_file,bacteria_slide,virus_slide,slide)
 
-#print "#########################################################"
+print "#########################################################"
 
-#print "----------- Bipartie Matrix: -----------------"
-#BipartieMatrix(virus_file,bacteria_slide,virus_slide,slide)
-#print "----------- Protospacers by Virus Matrix: -----------------"
-#ProtospacersByVirus(virus_file,virus_slide,slide)
-#print "----------- Spacers by Bacteria Matrix: -----------------"
-#SpacersByBacteria(bacteria_file,bacteria_slide,slide)
+print "----------- Bipartie Matrix: -----------------"
+BipartieMatrix(virus_file,bacteria_slide,virus_slide,slide)
+print "----------- Protospacers by Virus Matrix: -----------------"
+ProtospacersByVirus(virus_file,virus_slide,slide)
+print "----------- Spacers by Bacteria Matrix: -----------------"
+SpacersByBacteria(bacteria_file,bacteria_slide,slide)
 
-#print "#########################################################"
+print "#########################################################"
 
-#print "----------- DisSimilarity Virus: -----------------"
-#UNSimilarityVirusNetwork(virus_file,virus_slide,slide)
+print "----------- DisSimilarity Virus: -----------------"
+UNSimilarityVirusNetwork(virus_file,virus_slide,slide)
 
 
 print "----------- Infection Network: -----------------"
