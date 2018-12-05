@@ -46,18 +46,19 @@ network <- t(network)
 
 # Infomap -----------------------------------------------------------------
 
-prt = paste(name,' acquisition:',sep="");
-print(prt)
+# prt = paste(name,' acquisition:',sep="");
+# print(prt)
+
 # x <- Infomap_wrapper(Z = network, shuffled_matrices = network_shuffled, bipartite_groups = c('ProtoSpacer','Virus'), file_prefix = name)
 x <- Infomap_wrapper_NoShuffled(Z = network, bipartite_groups = c('ProtoSpacer','Virus'), file_prefix = name)
 
-x$p_value_table
+# x$p_value_table
+# nameTitle = paste(name," acquisition",sep="");
 
-nameTitle = paste(name," acquisition",sep="");
 out = paste("ProtospacerAcquisitionModularity_",name,".png",sep="");
 
 fortitle = strsplit(name, '_')
-title = paste("Bateria Spacer acquisition modularity from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
+title = paste("Virus ProtoSpacer acquisition modularity from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
 # print(title)
 
 # x$p_value_plot+labs(title=nameTitle)

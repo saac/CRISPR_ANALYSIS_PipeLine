@@ -30,7 +30,7 @@ out = paste("ProtoSpacerAcquisitionNetwork_",name,".png",sep="");
 
 fortitle = strsplit(name, '_')
 # title = paste("Spacer acquisition network from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
-title = paste("PsAN from Simlated Data ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
+title = paste("Virus ProtoSpacer acquisition Network from Simlated Data' ","\n ",fortitle[[1]][5]," = ",fortitle[[1]][6],sep="");
 
 # pdf(out, paper="USr");
 # png(out, height = 600, width = 1000, units = "px");
