@@ -416,7 +416,6 @@ def MaxAbundance(slide):
             
 ##################################################
 
-#print "Hola"
 
 virus_file = str(sys.argv[1])
 bacteria_file = str(sys.argv[2])

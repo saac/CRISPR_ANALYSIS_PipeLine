@@ -21,36 +21,6 @@ mkdir InfectionNetwork
 mkdir InfectionNetwork-Modularity
 
 
-# for i in {1,2,3,4,5,6,7,8,9}
-# do
-#     echo $i
-# #     ./SUPERMaster.sh mu1e-7_initialDiffDp1_S10P15_R-12499 $i
-#     ./PipeLine.sh $3 $i
-#     
-# #     echo Networks_$2
-#     cd $i 
-#     
-#     cp *Phage-abundance* ../Phage-abundance
-#     cp *Bacteria-abundance* ../Bacteria-abundance
-#     
-#     cd R_NetworkAnalysis
-# 
-#     
-#     cp SpacerAcquisitionNetwork_mu1e-7_$i_*.png ../../SpacerAcquisitionNetwork
-#     cp ProtoSpacerAcquisitionNetwork_mu1e-7_$i_*.png ../../ProtoSpacerAcquisitionNetwork    
-#     cp ImmunityNetwork_mu1e-7_$i_*.png ../../ImmunityNetwork
-# 
-#     cp ImmunityNetwork-Modularity_mu1e-7_$i_*.png ../../ImmunityNetwork-Modularity    
-#     cp SpacerAcquisitionModularity_mu1e-7_$i_*.png ../../SpacerAcquisitionModularity
-#     cp ProtospacerAcquisitionModularity_mu1e-7_$i_*.png ../../ProtospacerAcquisitionModularity
-#     
-#     cd ../..
-#     rm -rf $i
-# 
-# done
-
-
-
 for i in $(seq $1 10 $2)
 do
     echo $i

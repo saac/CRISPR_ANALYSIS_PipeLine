@@ -24,9 +24,6 @@ third = third[[1]][length(third[[1]])]
 name = strsplit(third, '.txt')
 name = name[[1]][length(name[[1]])]
 
-# print(name)
-
-
 protospacer_by_virus <- load_bipartite_file_1(argument,'\t')
 protospacer_by_virus <- protospacer_by_virus[,str_detect(colnames(protospacer_by_virus), 'Ps_')]
 protospacer_by_virus <- incidence_matrix_to_list(protospacer_by_virus)
@@ -35,7 +32,7 @@ network <- t(network)
 
 
 # ###############################################
-
+#
 # # Create shuffled networks ------------------------------------------------
 # file_prefix <- name
 # x <- shuffle_bipartite_matrix(network, shuffle_models, nsim=nsim, burnin=1000, write_files=T, file_prefix=file_prefix, folder=folder_shuffled)
@@ -46,7 +43,6 @@ network <- t(network)
 # network_shuffled <- read_shuffled_networks(shuff_methods = shuffle_models, file_prefix = file_prefix, nsim = nsim, folder = folder_shuffled)
 # sapply(network_shuffled, dim)
 
-# print(network_shuffled)
 
 # Infomap -----------------------------------------------------------------
 
@@ -69,8 +65,6 @@ title = paste("Bateria Spacer acquisition modularity from Simlated Data ","\n ",
 # pdf(out, paper="USr");
 
 # png(out, height = 600, width = 1000, units = "px");
-# png(out, height = 768, width = 1024, units = "px",res = 600);
-# png(out, height = 800, width = 1380, units = "px",res = 600);
 # png(out, height = 800, width = 1380, units = "px");
 png(out, height = 1000, width = 2000, units = "px");
 

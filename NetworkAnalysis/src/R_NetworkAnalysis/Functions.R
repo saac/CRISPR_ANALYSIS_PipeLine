@@ -1,5 +1,5 @@
 
-# The following are a set of functions developed by Shai Pilosof (https://github.com/shainova) for the Network Analysis of Bipartite Networks.
+# The following are a set of functions that have been originaly developed by Shai Pilosof (https://github.com/shainova) for the Network Analysis of Bipartite Networks.
 # These functions are still under development in Mercedes Pascual Group (https://github.com/pascualgroup).
 
 # Plotting ----------------------------------------------------------------
