@@ -8,6 +8,7 @@
 
 ###################################
 
+# mkdir shuffled
 
 for i in $(ls ../Networks_$1/Spacers-by-bacteria_*)
 do
@@ -16,11 +17,27 @@ do
         Rscript SpacerAcquisitionNetwork.R $i 
 done
 
+for i in $(ls ../Networks_$1/Spacers-by-bacteria_*)
+do
+        echo $i
+#         Rscript ArgsTest.R $i 
+        Rscript SpacerAcquisitionModularity.R $i
+
+done
+
 for i in $(ls ../Networks_$1/Protospacers-by-virus_*)
 do
         echo $i
 #         Rscript ArgsTest.R $i 
         Rscript ProtoSpacerAcquisitionNetwork.R $i
+
+done
+
+for i in $(ls ../Networks_$1/Protospacers-by-virus_*)
+do
+        echo $i
+#         Rscript ArgsTest.R $i 
+        Rscript ProtoSpacerAcquisitionModularity.R $i
 
 done
 
@@ -32,31 +49,20 @@ do
 
 done
 
-for i in $(ls ../Networks_$1/BipartieInfection_MATRIX_*)
-do
-        echo $i
-#         Rscript ArgsTest.R $i 
-        Rscript InfectionNetwork.R $i
-done
 
-
-
-# mkdir shuffled
-for i in $(ls ../Networks_$1/Spacers-by-bacteria_*)
-do
-        echo $i
-#         Rscript ArgsTest.R $i 
-        Rscript SpacerAcquisitionModularity.R $i
-
-done
-
-# mkdir shuffled
 for i in $(ls ../Networks_$1/Bipartite_MATRIX_*)
 do
         echo $i
 #         Rscript ArgsTest.R $i 
         Rscript ImmunityNetworkModularity.R $i
 
+done
+
+for i in $(ls ../Networks_$1/BipartieInfection_MATRIX_*)
+do
+        echo $i
+#         Rscript ArgsTest.R $i 
+        Rscript InfectionNetwork.R $i
 done
 
 
@@ -68,10 +74,3 @@ do
 done
 
 
-for i in $(ls ../Networks_$1/Protospacers-by-virus_*)
-do
-        echo $i
-#         Rscript ArgsTest.R $i 
-        Rscript ProtoSpacerAcquisitionModularity.R $i
-
-done
