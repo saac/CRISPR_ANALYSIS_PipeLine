@@ -39,6 +39,8 @@ dev.off();
 
 # ###############################################
 #
+# # Create shuffled networks ------------------------------------------------
+#
 # file_prefix <- name
 # x <- shuffle_bipartite_matrix(network, shuffle_models, nsim=nsim, burnin=1000, write_files=T, file_prefix=file_prefix, folder=folder_shuffled)
 # y <- prob_model_wrapper(network, non_zero_rc_thershold = 0.85, nsim = nsim, write_files = T, file_prefix = file_prefix, folder = folder_shuffled)
