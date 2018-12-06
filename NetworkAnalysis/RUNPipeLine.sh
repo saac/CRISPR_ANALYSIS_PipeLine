@@ -3,7 +3,7 @@
 # ./RUNPipeLine.sh T1 T2 FilePrefix-sed
 # ./RUNPipeLine.sh 0 50 mu1e-7_initialDiffDp10_S10P15_R-1987
 
-./FULLPlots.sh 0 $2
+./FULLPlots.sh $1 $2
 
 
 # mkdir Bacteria-abundance

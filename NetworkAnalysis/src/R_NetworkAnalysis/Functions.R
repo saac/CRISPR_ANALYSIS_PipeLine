@@ -271,7 +271,7 @@ parse_modules <- function(file, infomap_bipartite_format=F, node_data, assign_co
 }
 
 
-# #########################################################################
+# ###################################  These functions have been developed by Sergio A. Alcala-Corona (https://github.com/saac) ###################################
 
 Infomap_wrapper_NoShuffled <- function(Z, bipartite_groups, file_prefix, infomap_executable='Infomap'){
   node_data <- get_node_data_infomap(Z, is_bipartite = T, bipartite_groups = bipartite_groups)
@@ -286,6 +286,19 @@ Infomap_wrapper_NoShuffled <- function(Z, bipartite_groups, file_prefix, infomap
   return(list(node_data_obs=node_data_obs))
 }
 
+BuildNetwork <- function(argument,PSp){
+    protospacer_by_virus <- load_bipartite_file_1(argument,'\t')
+    protospacer_by_virus <- protospacer_by_virus[,str_detect(colnames(protospacer_by_virus), PSp)]
+    protospacer_by_virus <- incidence_matrix_to_list(protospacer_by_virus)
+    network <- protospacer_by_virus$M
+    network <- t(network)
+    return(network)
+}
 
-
+BuildBipartiteNetwork<- function(argument){
+    Bipartite_MATRIX <- load_bipartite_file_1(argument,'\t')
+    Bipartite_MATRIX <- Bipartite_MATRIX[,-which(colnames(Bipartite_MATRIX)=='X.1')]
+    network <-  t(Bipartite_MATRIX)
+    return(network)
+}
 
