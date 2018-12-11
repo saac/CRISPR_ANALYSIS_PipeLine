@@ -1,3 +1,0 @@
-DATA/* filter=lfs diff=lfs merge=lfs -text
-DATA/1_Low-MutRate filter=lfs diff=lfs merge=lfs -text
-DATA/2_Hi-MutRate filter=lfs diff=lfs merge=lfs -text
