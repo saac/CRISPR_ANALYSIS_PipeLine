@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1543982728646.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1043879992",
+    "id" : "F8B885B5",
+    "lastKnownWriteTime" : 1543984404,
+    "last_content_update" : 1543984625715,
+    "path" : "~/Dropbox/CHICAGO_PostDoc/Academics/CRISPR_ANALYSIS_PipeLine/Jupyter/NetwrokAnalysis/R_NetworkAnalysis/Functions.R",
+    "project_path" : "R_NetworkAnalysis/Functions.R",
+    "properties" : {
+        "cursorPosition" : "214,22",
+        "scrollLine" : "207"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
